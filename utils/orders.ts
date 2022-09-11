@@ -57,7 +57,9 @@ export const fetchOrdersAndConvertToCSV = async (
  * Function that iterates over orders data and retrieves/calculares desired output
  * listed in code test spec
  */
-const processOrderDataForReport = (orders: Array<Order>) => {
+const processOrderDataForReport = (
+  orders: Array<Order>
+): Array<OrderReport> => {
   return orders.map((order) => {
     const totalItems = order.items.length
       ? order.items.reduce((prev, curr) => {
@@ -94,7 +96,7 @@ const processOrderDataForReport = (orders: Array<Order>) => {
 const calcTotalOrderWithDiscounts = (
   total: number,
   discounts: Array<OrderDiscount>
-) => {
+): number => {
   let totalValue = total;
   // iterate over discounts in priority
   const discountsOrderedByPriority = discounts.sort(

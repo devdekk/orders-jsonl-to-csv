@@ -16,7 +16,7 @@ interface OrderItem {
 }
 
 export interface OrderDiscount {
-  type: string;
+  type: 'DOLLAR' | 'PERCENTAGE';
   value: number;
   priority: number;
 }
