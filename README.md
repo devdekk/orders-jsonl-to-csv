@@ -14,10 +14,10 @@ Follow these steps to get the app to run:
 
 $ npm run install
 
-# run app to create out.csv at root
+# run app
 
 $ npm run report
 
-# run app to create out.csv at root and mock email with file attached
+# run app with mock email
 
 $ npm run report --email=<youremail@gmail.com>
