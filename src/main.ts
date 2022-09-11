@@ -1,4 +1,6 @@
 import { fetchOrdersAndConvertToCSV } from '../utils/orders';
+
+// get email from command line
 const emailAddress = process.env.npm_config_email || '';
 
 const ordersFileLocation =

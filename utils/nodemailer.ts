@@ -22,5 +22,6 @@ export const sendTestEmail = async (emailAdress: string, csv: string) => {
     attachments: [{ filename: 'out.csv', content: csv }]
   });
 
+  // eslint-disable-next-line no-console
   console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
 };

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import readJsonLines from 'read-json-lines-sync';
 import converter from 'json-2-csv';
+import { Order, OrderDiscount, OrderReport } from '../types';
 import { writeFile } from 'fs/promises';
 import { sendTestEmail } from '../utils/nodemailer';
 
@@ -23,25 +24,31 @@ export const fetchOrdersAndConvertToCSV = async (
     });
     // https://www.npmjs.com/package/read-json-lines-sync
     const orderList = readJsonLines(data);
-    const processedOrders = processOrderDataForReport(orderList);
+
+    const processedOrders: Array<OrderReport> =
+      processOrderDataForReport(orderList);
 
     converter.json2csv(processedOrders, (err, csv) => {
       if (err) {
+        // eslint-disable-next-line no-console
         console.log('fetchOrdersAndConvertToCSV error json2csv: ', err);
       }
 
       writeFile('out.csv', csv).then(() => {
+        // eslint-disable-next-line no-console
         console.log('fetchOrdersAndConvertToCSV: out.csv file created!');
 
         // Send test email if email address provided
         if (emailAddress !== '') {
           sendTestEmail(emailAddress, csv).then(() => {
+            // eslint-disable-next-line no-console
             console.log('fetchOrdersAndConvertToCSV: test email sent!');
           });
         }
       });
     });
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.log('fetchOrdersAndConvertToCSV error try/catch: ', error);
   }
 };
@@ -50,7 +57,7 @@ export const fetchOrdersAndConvertToCSV = async (
  * Function that iterates over orders data and retrieves/calculares desired output
  * listed in code test spec
  */
-const processOrderDataForReport = (orders: any) => {
+const processOrderDataForReport = (orders: Array<Order>) => {
   return orders.map((order) => {
     const totalItems = order.items.length
       ? order.items.reduce((prev, curr) => {
@@ -72,7 +79,6 @@ const processOrderDataForReport = (orders: any) => {
     return {
       order_id: order.order_id,
       order_datetime: new Date(order.order_date),
-      totalOrderValue: totalOrderValue.toFixed(2),
       total_order_value: totalOrderWithDiscounts.toFixed(2),
       average_unit_price: (totalOrderWithDiscounts / totalItems).toFixed(2),
       total_units_count: totalItems,
@@ -85,7 +91,10 @@ const processOrderDataForReport = (orders: any) => {
 /**
  * Function that calculates total order value minus discounts in their priority order
  */
-const calcTotalOrderWithDiscounts = (total: number, discounts: any) => {
+const calcTotalOrderWithDiscounts = (
+  total: number,
+  discounts: Array<OrderDiscount>
+) => {
   let totalValue = total;
   // iterate over discounts in priority
   const discountsOrderedByPriority = discounts.sort(
